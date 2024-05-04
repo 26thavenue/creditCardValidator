@@ -9,7 +9,7 @@ type CardNumber struct{
 
 }
 
-func ( c *CardNumber) validateCard() bool{
+func ( c *CardNumber) ValidateCard() bool{
 
 	sum := 0
 	isSecond := false
@@ -32,7 +32,5 @@ func ( c *CardNumber) validateCard() bool{
 	}
 
 	return sum % 10 == 0
-
-
 
 }

@@ -1,20 +1,36 @@
 package main
 
 import (
-	"net/http"
+    "net/http"
 
-	"github.com/go-chi/chi/v5"
-    "github.com/go-chi/chi/v5/middleware"
-	
+    "github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+    "github.com/26thavenue/creditCardValidator/middlewares"
+    "github.com/26thavenue/creditCardValidator/handlers"
 )
 
-func main(){
-	router := chi.NewRouter()
+func main() {
+    r := chi.NewRouter()
 
-	router.Use(middleware.Logger)
+    r.Use(middleware.Logger)
+    r.Use(middlewares.GormMiddleware)
 
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-        w.Write([]byte("OK"))
+    // Define routes
+    r.Route("/users", func(r chi.Router) {
+		r.Get("/", handlers.ListAllUsers)
+		r.Post("/", handlers.CreateUser)
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", handlers.GetUser)
+			r.Put("/", handlers.UpdateUser)
+			r.Delete("/", handlers.DeleteUser)
+		})  
     })
-    http.ListenAndServe(":3000", router)
+
+	r.Route("/creditcards", func(r chi.Router) {
+		r.Post("/", handlers.AddCreditCardHandler)
+	})
+
+
+    // Start the server
+    http.ListenAndServe(":8080", r)
 }
